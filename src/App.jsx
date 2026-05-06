@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import Formulario from './components/Formulario/Index.jsx'
 import Subtitulo from './components/Subtitulo/Index.jsx'
@@ -29,7 +29,22 @@ const citasIniciales = [
 ]
 
 function App() {
-  const [citas, setCitas] = useState(citasIniciales)
+  const [citas, setCitas] = useState(() => {
+    try {
+      const saved = localStorage.getItem('citas')
+      return saved ? JSON.parse(saved) : citasIniciales
+    } catch (e) {
+      return citasIniciales
+    }
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('citas', JSON.stringify(citas))
+    } catch (e) {
+      // ignore write errors
+    }
+  }, [citas])
 
   const crearCita = (cita) => {
     setCitas([...citas, cita])
